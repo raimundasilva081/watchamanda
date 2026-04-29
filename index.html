@@ -44,30 +44,31 @@ button:hover {
 
 <script>
 function assistir() {
-    document.getElementById("status").innerText = "Carregando anúncio...";
+    const status = document.getElementById("status");
 
-    try {
-        // AdsGram rewarded
-        Adsgram.init({
-            blockId: "bot-28969"
-        });
-
-        Adsgram.show()
-        .then(() => {
-            document.getElementById("status").innerText = "Anúncio concluído!";
-
-            // manda reward pro bot
-            setTimeout(() => {
-                window.location.href = "https://t.me/SEU_BOT?start=REWARD";
-            }, 1000);
-        })
-        .catch(() => {
-            document.getElementById("status").innerText = "Erro ao carregar anúncio.";
-        });
-
-    } catch (e) {
-        document.getElementById("status").innerText = "Erro no sistema.";
+    if (typeof Adsgram === "undefined") {
+        status.innerText = "SDK não carregou ainda...";
+        return;
     }
+
+    status.innerText = "Carregando anúncio...";
+
+    Adsgram.init({
+        blockId: "bot-28969"
+    });
+
+    Adsgram.show()
+    .then(() => {
+        status.innerText = "Anúncio concluído!";
+
+        setTimeout(() => {
+            window.location.href = "https://t.me/watchamanda_bot?start=REWARD";
+        }, 1000);
+    })
+    .catch((err) => {
+        status.innerText = "Sem anúncio disponível agora.";
+        console.log(err);
+    });
 }
 </script>
 
