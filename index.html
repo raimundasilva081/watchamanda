@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Ganha Real</title>
 
-<!-- SDK AdsGram -->
 <script src="https://adsgram.ai/sdk.js"></script>
 
 <style>
@@ -15,7 +14,6 @@ body {
     background: #111;
     color: white;
 }
-
 button {
     padding: 15px 30px;
     font-size: 18px;
@@ -23,11 +21,6 @@ button {
     border-radius: 8px;
     background: #00c853;
     color: white;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #00e676;
 }
 </style>
 
@@ -43,32 +36,44 @@ button:hover {
 <p id="status"></p>
 
 <script>
+function getUserId() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("userId");
+}
+
 function assistir() {
     const status = document.getElementById("status");
 
-    if (typeof Adsgram === "undefined") {
-        status.innerText = "SDK não carregou ainda...";
-        return;
+    try {
+        if (!window.Adsgram) {
+            status.innerText = "Carregando sistema...";
+            return;
+        }
+
+        status.innerText = "Carregando anúncio...";
+
+        Adsgram.init({
+            blockId: "bot-28969"
+        });
+
+        Adsgram.show()
+        .then(() => {
+            status.innerText = "Anúncio concluído!";
+
+            const userId = getUserId();
+
+            setTimeout(() => {
+                window.location.href = `https://t.me/watchamanda_bot?start=REWARD_${userId}`;
+            }, 1000);
+        })
+        .catch(() => {
+            status.innerText = "Sem anúncio disponível agora.";
+        });
+
+    } catch (e) {
+        status.innerText = "Erro interno, tente novamente.";
+        console.log(e);
     }
-
-    status.innerText = "Carregando anúncio...";
-
-    Adsgram.init({
-        blockId: "bot-28969"
-    });
-
-    Adsgram.show()
-    .then(() => {
-        status.innerText = "Anúncio concluído!";
-
-        setTimeout(() => {
-            window.location.href = "https://t.me/watchamanda_bot?start=REWARD";
-        }, 1000);
-    })
-    .catch((err) => {
-        status.innerText = "Sem anúncio disponível agora.";
-        console.log(err);
-    });
 }
 </script>
 
